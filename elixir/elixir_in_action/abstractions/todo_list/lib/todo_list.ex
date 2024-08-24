@@ -1,7 +1,13 @@
 defmodule TodoList do
   defstruct next_id: 1, entries: %{}
 
-  def new, do: %TodoList{}
+  def new(entries \\ []) do
+    Enum.reduce(
+      entries,
+      %TodoList{},
+      fn entry, acc_tdl -> add_entry(acc_tdl, entry) end
+    )
+  end
 
   def add_entry(todo_list, entry) do
     entry = Map.put(entry, :id, todo_list.next_id)
@@ -26,5 +32,10 @@ defmodule TodoList do
         new_entries = Map.put(todo_list.entries, id, new_entry)
         %TodoList{ todo_list | entries: new_entries }
     end
+  end
+
+  def delete(todo_list, id) do
+    new_entries = Map.delete(todo_list.entries, id)
+    %TodoList{ todo_list | entries: new_entries}
   end
 end
