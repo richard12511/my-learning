@@ -7,7 +7,7 @@ defmodule TodoList do
     entry = Map.put(entry, :id, todo_list.next_id)
 
     updated_entries = Map.put(todo_list.entries, todo_list.next_id, entry)
-    %TodoList{todo_list | entries: updated_entries, next_id: todo_list.next_id + 1 } 
+    %TodoList{todo_list | entries: updated_entries, next_id: todo_list.next_id + 1}
   end
 
   def entries(todo_list, date) do
@@ -16,4 +16,15 @@ defmodule TodoList do
     |> Enum.filter(&(&1.date == date))
   end
 
+  def update_entry(todo_list, id, updater_fun) do
+    case Map.fetch(todo_list.entries, id) do
+      :error ->
+        todo_list
+
+      {:ok, old_entry} ->
+        new_entry = updater_fun.(old_entry)
+        new_entries = Map.put(todo_list.entries, id, new_entry)
+        %TodoList{ todo_list | entries: new_entries }
+    end
+  end
 end
