@@ -10,6 +10,10 @@ defmodule TodoList do
     %TodoList{todo_list | entries: updated_entries, next_id: todo_list.next_id + 1 } 
   end
 
-  def entries(list, date) do
+  def entries(todo_list, date) do
+    todo_list.entries
+    |> Map.values()
+    |> Enum.filter(&(&1.date == date))
   end
+
 end
