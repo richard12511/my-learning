@@ -30,12 +30,24 @@ defmodule TodoList do
       {:ok, old_entry} ->
         new_entry = updater_fun.(old_entry)
         new_entries = Map.put(todo_list.entries, id, new_entry)
-        %TodoList{ todo_list | entries: new_entries }
+        %TodoList{todo_list | entries: new_entries}
     end
   end
 
   def delete(todo_list, id) do
     new_entries = Map.delete(todo_list.entries, id)
-    %TodoList{ todo_list | entries: new_entries}
+    %TodoList{todo_list | entries: new_entries}
   end
+end
+
+defmodule TodoList.CsvImporter do
+
+  def import(path) do
+    File.stream!(path)
+    |> Stream.map(fn line -> String.trim_trailing(line, "\n") end)
+    |> Stream.map(fn line -> String.split(line, ",") end)
+    |> Stream.map(fn [date, title] -> %{date: date, title: title} end)
+    |> TodoList.new()
+  end
+
 end
